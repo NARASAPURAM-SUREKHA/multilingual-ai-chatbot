@@ -48,6 +48,4 @@ app.post("/api/chat", async (req, res) => {
   }
 });
 
-app.listen(PORT, () => {
-  console.log(`Chatbot running on port ${PORT}`);
-});
+export default app;
