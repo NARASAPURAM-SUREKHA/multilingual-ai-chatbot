@@ -3,15 +3,19 @@ import "dotenv/config";
 import { GoogleGenAI } from "@google/genai";
 
 const app = express();
-const PORT = process.env.PORT || 3000;
 
 const ai = new GoogleGenAI({
   apiKey: process.env.GEMINI_API_KEY
 });
 
 app.use(express.json());
-app.use(express.static("public"));
 
+// Serve the chatbot homepage
+app.get("/", (req, res) => {
+  res.sendFile(new URL("./public/index.html", import.meta.url).pathname);
+});
+
+// Chat API
 app.post("/api/chat", async (req, res) => {
   try {
     const message = req.body.message?.trim();
@@ -30,8 +34,8 @@ app.post("/api/chat", async (req, res) => {
           "You are a friendly multilingual AI chatbot. " +
           "Understand and respond naturally in Telugu, Hindi, Kannada, English, " +
           "and other languages. If the user writes in a particular language, " +
-          "prefer replying in that same language unless they ask for another language. " +
-          "Keep answers clear and helpful."
+          "reply in that same language unless they ask for another language. " +
+          "Keep answers clear, helpful and reasonably concise."
       }
     });
 
