@@ -14,9 +14,9 @@ app.use(express.static("public"));
 
 app.post("/api/chat", async (req, res) => {
   try {
-    const message = req.body.message;
+    const message = req.body.message?.trim();
 
-    if (!message || !message.trim()) {
+    if (!message) {
       return res.status(400).json({
         error: "Please enter a message."
       });
@@ -24,7 +24,15 @@ app.post("/api/chat", async (req, res) => {
 
     const response = await ai.models.generateContent({
       model: "gemini-2.5-flash",
-      contents: message
+      contents: message,
+      config: {
+        systemInstruction:
+          "You are a friendly multilingual AI chatbot. " +
+          "Understand and respond naturally in Telugu, Hindi, Kannada, English, " +
+          "and other languages. If the user writes in a particular language, " +
+          "prefer replying in that same language unless they ask for another language. " +
+          "Keep answers clear and helpful."
+      }
     });
 
     res.json({
@@ -35,7 +43,7 @@ app.post("/api/chat", async (req, res) => {
     console.error("Gemini error:", error);
 
     res.status(500).json({
-      error: "Sorry, something went wrong. Please try again."
+      error: "Sorry, I couldn't process your message right now."
     });
   }
 });
